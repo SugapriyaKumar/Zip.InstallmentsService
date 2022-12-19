@@ -14,8 +14,11 @@ namespace Zip.Installments.App.Services
 
         public async Task<PaymentPlanViewModel> GetPaymentPlan(OrdersViewModel order)
         {
-            
-            var response = await apiClient.GetAsync($"Installments?purchaseAmount={order.OrderAmount}&purchaseDate={order.OrderDate}");
+            if(order == null)
+                return null;
+
+            var purchaseDate = order.OrderDate.HasValue ? $"&purchaseDate={order.OrderDate.Value.ToString("MM/dd/yyyy")}" : String.Empty ;
+            var response = await apiClient.GetAsync($"Installments?purchaseAmount={order.OrderAmount}{purchaseDate}");
             if(response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
